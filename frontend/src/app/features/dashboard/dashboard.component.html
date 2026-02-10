@@ -1,0 +1,128 @@
+<div class="app-container">
+  
+  <nav class="navbar">
+    <div class="nav-content">
+      <div class="nav-brand">
+        <div class="logo-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+        </div>
+        <span class="brand-name">FinanceApp</span>
+      </div>
+      
+      <div class="nav-user">
+        <div class="user-info" *ngIf="currentUser">
+          <span class="user-name">{{ currentUser.firstName || currentUser.username }}</span>
+          <div class="avatar">{{ (currentUser.firstName || currentUser.username).charAt(0).toUpperCase() }}</div>
+        </div>
+        <button (click)="logout()" class="btn-text">Salir</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    
+    <header class="page-header">
+      <h1>Panel de Control</h1>
+      <p>Visión general de tus finanzas</p>
+    </header>
+
+    <div class="grid-layout">
+      
+      <section class="left-column">
+        
+        <div class="card">
+          <div class="card-header">
+            <h3>Nueva Transacción</h3>
+          </div>
+          <div class="card-body">
+            <form (ngSubmit)="addExpense()" class="transaction-form">
+              <div class="form-row">
+                <div class="form-group grow">
+                  <label>Concepto</label>
+                  <input type="text" [(ngModel)]="newExpense.description" name="description" placeholder="Ej: Compra mensual" class="input-field">
+                </div>
+                <div class="form-group">
+                  <label>Monto (€)</label>
+                  <input type="number" [(ngModel)]="newExpense.amount" name="amount" placeholder="0.00" step="0.01" class="input-field mono">
+                </div>
+                <div class="form-group">
+                  <label>Categoría</label>
+                  <select [(ngModel)]="newExpense.category" name="category" class="input-field">
+                    <option value="" disabled selected>Elegir...</option>
+                    <option value="Comida">Comida</option>
+                    <option value="Hogar">Hogar</option>
+                    <option value="Ocio">Ocio</option>
+                    <option value="Salud">Salud</option>
+                    <option value="Transporte">Transporte</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn-primary">Añadir Movimiento</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header flex-between">
+            <h3>Historial Reciente</h3>
+            <span class="badge">{{ expenses.length }} movs</span>
+          </div>
+
+          <div class="table-container">
+            <table class="transactions-table" *ngIf="expenses.length > 0">
+              <thead>
+                <tr>
+                  <th>Concepto</th>
+                  <th>Categoría</th>
+                  <th class="text-right">Monto</th>
+                  <th class="text-center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let expense of expenses">
+                  <td>
+                    <div class="transaction-concept">{{ expense.description }}</div>
+                  </td>
+                  <td>
+                    <span class="category-badge">{{ expense.category }}</span>
+                  </td>
+                  <td class="text-right">
+                    <span class="amount" [class.positive]="expense.amount > 0" [class.negative]="expense.amount <= 0">
+                      {{ expense.amount > 0 ? '+' : '' }}{{ expense.amount }}€
+                    </span>
+                  </td>
+                  <td class="text-center">
+                    <button (click)="deleteExpense(expense.id)" class="btn-delete" title="Eliminar">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="empty-state" *ngIf="expenses.length === 0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+              <p>No hay transacciones registradas</p>
+              <span>Añade tu primera transacción arriba</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="right-column">
+        <div class="card">
+          <div class="card-header">
+            <h3>Distribución por Categoría</h3>
+          </div>
+          <div class="card-body">
+            <div class="chart-container">
+              <canvas #chartCanvas></canvas>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+</div>
