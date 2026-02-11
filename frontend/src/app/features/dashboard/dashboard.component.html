@@ -90,7 +90,7 @@
                   </td>
                   <td class="text-right">
                     <span class="amount" [class.positive]="expense.amount > 0" [class.negative]="expense.amount <= 0">
-                      {{ expense.amount > 0 ? '+' : '' }}{{ expense.amount }}€
+                      {{ expense.amount | currency:'EUR':'symbol':'1.2-2' }}
                     </span>
                   </td>
                   <td class="text-center">
