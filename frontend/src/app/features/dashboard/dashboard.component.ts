@@ -23,6 +23,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   currentUser: User | null = null;
   expenses: Expense[] = [];
+  totalBalance: number = 0; // Añadida la propiedad totalBalance
   chart: Chart | null = null;
 
   newExpense: Expense = {
@@ -46,12 +47,18 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.expenseService.getExpenses().subscribe({
       next: (expenses) => {
         this.expenses = expenses;
+        this.updateTotalBalance(); // Actualizar el balance total
         if (this.chart) {
           this.updateChart();
         }
       },
       error: (err) => console.error('Error loading expenses:', err)
     });
+  }
+
+  // Nuevo método para calcular el balance total
+  updateTotalBalance(): void {
+    this.totalBalance = this.expenses.reduce((acc, expense) => acc + Number(expense.amount), 0);
   }
 
   addExpense(): void {
